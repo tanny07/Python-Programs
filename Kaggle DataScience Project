@@ -1,0 +1,163 @@
+#importing all the required modules for the analysis
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#importing the dataset
+app_data = pd.read_csv('E://Data Science Videos//DataScience Projects//GoogleAppRatings//googleplaystore.csv')
+
+#checking the dataset using head function
+app_data.head()
+
+#cheking the rows and columns of dataset using the shape attribute
+app_data.shape
+
+#Summary Statistics using the describe method
+app_data.describe() 
+#Here we get to know that the Rating column is only in the numerical form and all other columns are in categorical from
+
+#Boxploting the ratings usings boxplot method
+app_data.boxplot()
+#here we get to know that there is an outlier above 17.5
+
+#making the histogram of the same kind
+app_data.hist()
+
+#checking the number of missing/null values
+app_data.info()
+
+DATA CLEANING :
+
+#True values are the null values of the dataset 
+app_data.isnull()   
+
+#getting the sum of all null values 
+app_data.isnull().sum()
+
+#Droping the only single outlier from the Rating column
+app_data.drop([10472],inplace=True)
+
+#checking that the row(10472) has been deleted/removed or not
+app_data[10470:10475]
+
+#again getting the boxplot of the dataset after the outlier has been removed
+app_data.boxplot()
+
+#again checking the histogram of Rting column for the type of Skewness
+app_data.hist()
+#so the Rating column's histogram is rightly skewed,hence.We are going to filling all the blank rows with the median value.
+
+#Removing Columns that are 90% Empty
+threshold = len(app_data)*0.1  #10% of (rows = 10840)
+threshold
+
+#droping the column which have values less than threshold
+app_data.dropna(thresh=threshold, axis=1, inplace=True)
+
+print(app_data.isnull().sum())
+#none of the columns gets droped,because no columns has the 10% data 
+
+DATA IMPUTATION AND MANIPULATION :
+
+fill the null values with appropriate values using aggregate functions such as mean,median mode.
+
+#define a function inpute_median
+def input_median(series):
+    return series.fillna(series.median())
+#fillna refers to fill the values which are not in the dataset with series.median function
+
+#passing the each values to the function and performing transform on it
+app_data.Rating = app_data['Rating'].transform(input_median)
+
+#counting the number of null numbers in each values
+app_data.isnull().sum()
+
+#checking modes of categorical values 
+print(app_data['Type'].mode())
+print(app_data['Current Ver'].mode())
+print(app_data['Android Ver'].mode())
+#the mode of categorical values is unimodel and not bymodel
+
+#filling the missing categorical values with mode and using fillna function 
+app_data['Type'].fillna(str(app_data['Type'].mode().values[0]),inplace=True)
+app_data['Current Ver'].fillna(str(app_data['Current Ver'].mode().values[0]),inplace=True)
+app_data['Android Ver'].fillna(str(app_data['Android Ver'].mode().values[0]),inplace=True)
+
+#counting the number of null values in each column
+app_data.isnull().sum()
+
+# Let's convert Price,Reviews and Ratings into numerical values
+
+# 1.Removing the dollar values and making it string
+app_data['Price'] = app_data['Price'].apply(lambda x: str(x).replace('$','') if '$' in str(x) else str(x))
+# 2.Converting back the Price Column values to float values 
+app_data['Price'] = app_data['Price'].apply(lambda x:float(x))
+# 3.Numerically converting the Reviews values and leave the error by using coerce  
+app_data['Reviews'] = pd.to_numeric(app_data['Reviews'], errors='coerce')
+
+# Converting the installs values to float and replacing the symbols(+ and ,)between the 
+app_data['Installs'] = app_data['Installs'].apply(lambda x: str(x).replace('+','') if '+' in str(x) else str(x))
+app_data['Installs'] = app_data['Installs'].apply(lambda x: str(x).replace(',','') if ',' in str(x) else str(x))
+app_data['Installs'] = app_data['Installs'].apply(lambda x: float(x))
+
+#checking the dataset for the above cleaning is applied or not to Price,Review and Installs 
+app_data.head(10)
+
+#Summary stats after cleaning for the confirmation again for float values
+app_data.describe()  
+
+DATA VISUALIZATION :
+
+#grouping the data according to there categories and performing the mean and sum funtion to get a clear vision to the data
+grp = app_data.groupby('Category')
+x = grp['Rating'].agg(np.mean)
+y = grp['Price'].agg(np.sum)
+z = grp['Reviews'].agg(np.mean)
+print(x)
+print(y)
+print(z)
+
+#figsize refers to the size of the plotter 
+#The instance ro refers to the round dots in the plot 
+#The plot labels are rotated to 90 degree for a clear vision
+plt.figure(figsize=(12,5))
+plt.plot(x, 'ro')
+plt.xticks(rotation=90)
+plt.show()
+
+#From this plot we can get a clear vision about the highest ratings for the apps
+plt.figure(figsize=(16,5))
+plt.plot(x, 'ro', color='b')
+plt.xticks(rotation=90)
+plt.title('Category wise Rating')
+plt.xlabel('Categories-->')
+plt.ylabel('Ratings-->')
+plt.show()
+
+#This plot clearly shows us the most purchased apps 
+plt.figure(figsize=(16,5))
+plt.plot(y, 'r--', color='g')
+plt.xticks(rotation=90)
+plt.title('Category wise Pricing')
+plt.xlabel('Categories-->')
+plt.ylabel('Pricing-->')
+plt.show()
+
+#this plot show us the Reviews of all the apps 
+plt.figure(figsize=(16,5))
+plt.plot(z, 'g^', color='m')
+plt.xticks(rotation=90)
+plt.title('Category wise Reviews')
+plt.xlabel('Categories-->')
+plt.ylabel('Reviews-->')
+plt.show()
+
+AFTER ALL THE ANALYSIS AND PLOTTING OF THE DATASET WE GET A CLEAR VISION OF WHICH IS THE MOSTLY PURCHASED APP,WHICH APP HAS THE BEST RATINGS AND REVIEWS
+
+import pandas as pd
+googleplaystore = pd.read_csv("../input/tannys-dataset/googleplaystore.csv")
+
+import pandas as pd
+googleplaystore = pd.read_csv("../input/tannys-dataset/googleplaystore.csv")
