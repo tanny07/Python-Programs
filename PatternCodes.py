@@ -200,5 +200,3 @@ for i in range(n,0,-1):
         print("*", end="")
     print()
 
-
-# https://www.tutorialstonight.com/python/alphabet-pattern-programs-in-python.php
