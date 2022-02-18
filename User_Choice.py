@@ -33,7 +33,7 @@ def Get_the_value():
 
 
 hey = int(input(
-    "Hwllo would you love to do some maths, if yes then press 1 or else press 0 to exit: "))
+    "Hello would you love to do some maths, if yes then press 1 or else press 0 to exit: "))
 if(hey == 1):
     Get_the_value
 else:
